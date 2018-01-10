@@ -6,10 +6,13 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
 	public float moveSpeed = 8;
+	public float jumpHeight = 3.0f;
 	public LayerMask colliderLayers;
 	Vector2 _speed;
 	Vector2 _moveStepPos;
 	bool isFaceRight;
+	bool isInGround;
+	bool isjumping;
 	BoxCollider2D colliderBox;
 	Vector2[] topColliderPoints, bottomColliderPoints, leftColliderPoints, rightColliderPoints;	//check dir collider points;
 	float colliderOffsetValue = 0.01f;
@@ -39,6 +42,13 @@ public class PlayerController : MonoBehaviour {
 	void InputEvent(){
 		float horValue = Input.GetAxis("Horizontal");
 		SetHorizontalMovement(horValue);
+
+		if(Input.GetButtonDown("Jump")){
+			StartJump();
+		}
+	}
+	void StartJump(){
+		_speed.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(Physics2D.gravity.y));
 	}
 	void SetHorizontalMovement(float horValue){
 		_moveStepPos.x = _speed.x = moveSpeed * horValue * Time.deltaTime;
@@ -92,17 +102,19 @@ public class PlayerController : MonoBehaviour {
 	void CheckColliderBelow(){
 		_speed.y += Physics2D.gravity.y * Time.deltaTime;
 		_moveStepPos.y = _speed.y * Time.deltaTime;
-		for(int i = 0; i < bottomColliderPoints.Length; i++){
-			Vector2 point = bottomColliderPoints[i];
-			Debug.DrawLine(point, point - (Vector2)(transform.up * 1f), Color.red);
-			RaycastHit2D rayHit = Physics2D.Raycast(point, -transform.up, Mathf.Abs(_moveStepPos.y), colliderLayers);
-			if(rayHit){
-				_speed.y = 0;
-				_moveStepPos.y = -rayHit.distance;
-				break;
-			}
+		if(_speed.y < 0){
+			for(int i = 0; i < bottomColliderPoints.Length; i++){
+				Vector2 point = bottomColliderPoints[i];
+				Debug.DrawLine(point, point - (Vector2)(transform.up * 1f), Color.red);
+				RaycastHit2D rayHit = Physics2D.Raycast(point, -transform.up, Mathf.Abs(_moveStepPos.y), colliderLayers);
+				if(rayHit){
+					_speed.y = 0;
+					_moveStepPos.y = -rayHit.distance;
+					isInGround = true;
+					isjumping = false;
+					break;
+				}
+			}	
 		}
 	}
-
-	
 }
