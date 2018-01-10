@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour {
 		ResetColliderParams();
 		CheckColliderSide();
 		CheckColliderBelow();
-		// CheckColliderAbove();
+		CheckColliderAbove();
 		
 		transform.Translate(_moveStepPos);
 		Flip();
@@ -105,16 +105,29 @@ public class PlayerController : MonoBehaviour {
 		if(_speed.y < 0){
 			for(int i = 0; i < bottomColliderPoints.Length; i++){
 				Vector2 point = bottomColliderPoints[i];
-				Debug.DrawLine(point, point - (Vector2)(transform.up * 1f), Color.red);
+				Debug.DrawLine(point, point - (Vector2)transform.up, Color.red);
 				RaycastHit2D rayHit = Physics2D.Raycast(point, -transform.up, Mathf.Abs(_moveStepPos.y), colliderLayers);
 				if(rayHit){
 					_speed.y = 0;
-					_moveStepPos.y = -rayHit.distance;
+					_moveStepPos.y = -rayHit.distance + 0.01f;
 					isInGround = true;
 					isjumping = false;
 					break;
 				}
 			}	
+		}
+	}
+	void CheckColliderAbove(){
+		if(_speed.y > 0){
+			for(int i = 0; i < topColliderPoints.Length; i++){
+				Vector2 point = topColliderPoints[i];
+				Debug.DrawLine(point, point + (Vector2)transform.up, Color.blue);
+				RaycastHit2D rayHit = Physics2D.Raycast(point, transform.up, Mathf.Abs(_moveStepPos.y), colliderLayers);
+				if(rayHit && rayHit.collider.gameObject.layer != LayerMask.NameToLayer("OnWayPlatforms")){
+					_speed.y = 0;
+					_moveStepPos.y = rayHit.distance;
+				}
+			}
 		}
 	}
 }
