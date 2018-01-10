@@ -123,7 +123,7 @@ public class PlayerController : MonoBehaviour {
 				Vector2 point = topColliderPoints[i];
 				Debug.DrawLine(point, point + (Vector2)transform.up, Color.blue);
 				RaycastHit2D rayHit = Physics2D.Raycast(point, transform.up, Mathf.Abs(_moveStepPos.y), colliderLayers);
-				if(rayHit && rayHit.collider.gameObject.layer != LayerMask.NameToLayer("OnWayPlatforms")){
+				if(rayHit && rayHit.collider.gameObject.layer != LayerMask.NameToLayer("OneWayPlatforms")){
 					_speed.y = 0;
 					_moveStepPos.y = rayHit.distance;
 				}
