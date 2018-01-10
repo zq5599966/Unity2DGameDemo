@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
 		InputEvent();
 	}
-	void FixedUpdate()
+	void LateUpdate()
 	{
 		ResetColliderParams();
 		CheckColliderSide();
