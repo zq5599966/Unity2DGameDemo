@@ -3,11 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
+public enum Direction{
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT,
+	UP_RIGHT,
+	UP_LEFT,
+	DOWN_RIGHT,
+	DOWN_LEFT
+}
 
+public class PlayerController : MonoBehaviour {
 	public float moveSpeed = 8;
 	public float jumpHeight = 3.0f;
 	public LayerMask colliderLayers;
+	public Transform shootSpawn;
+	public GameObject bullet;
 	Vector2 _speed;
 	Vector2 _moveStepPos;
 	bool isFaceRight;
@@ -16,7 +28,7 @@ public class PlayerController : MonoBehaviour {
 	BoxCollider2D colliderBox;
 	Vector2[] topColliderPoints, bottomColliderPoints, leftColliderPoints, rightColliderPoints;	//check dir collider points;
 	float colliderOffsetValue = 0.01f;
-	
+	Direction curDir;
 	void Awake()
 	{
 		isFaceRight = true;
@@ -42,9 +54,15 @@ public class PlayerController : MonoBehaviour {
 	void InputEvent(){
 		float horValue = Input.GetAxis("Horizontal");
 		SetHorizontalMovement(horValue);
+		float verValue = Input.GetAxis("Vertical");
+		SetDirection(horValue, verValue);
 
 		if(Input.GetButtonDown("Jump")){
 			StartJump();
+		}
+
+		if(Input.GetButtonDown("Fire1")){
+			ShootOnce();
 		}
 	}
 	void StartJump(){
@@ -52,6 +70,17 @@ public class PlayerController : MonoBehaviour {
 	}
 	void SetHorizontalMovement(float horValue){
 		_moveStepPos.x = _speed.x = moveSpeed * horValue * Time.deltaTime;
+	}
+	void SetDirection(float horValue, float verValue){
+		if(horValue == 0 && verValue > 0){
+			curDir = Direction.UP;
+		}
+		else if(horValue == 0 && verValue < 0){
+			curDir = Direction.DOWN;
+		}
+		else if(verValue == 0){
+			curDir = isFaceRight ? Direction.RIGHT : Direction.LEFT;
+		}
 	}
 	void Flip(){
 		if(isFaceRight && _speed.x < 0 || !isFaceRight && _speed.x > 0){
@@ -129,5 +158,9 @@ public class PlayerController : MonoBehaviour {
 				}
 			}
 		}
+	}
+	void ShootOnce(){
+		BulletController bc = Instantiate(bullet, shootSpawn.position, Quaternion.identity).GetComponent<BulletController>();
+		bc.initBulletParam(isFaceRight, curDir);
 	}
 }
