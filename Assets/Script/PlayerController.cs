@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject bullet;
 	Vector2 _speed;
 	Vector2 _moveStepPos;
-	bool isFaceRight;
+	public bool isFaceRight;
 	bool isInGround;
 	bool isjumping;
 	BoxCollider2D colliderBox;
@@ -52,7 +52,10 @@ public class PlayerController : MonoBehaviour {
 		CheckColliderAbove();
 		
 		transform.Translate(_moveStepPos);
-		Flip();
+		if(isFaceRight && _speed.x < 0 || !isFaceRight && _speed.x > 0){
+			Flip();
+		}
+		
 	}
 	void InputEvent(){
 		float horValue = Input.GetAxis("Horizontal");
@@ -85,13 +88,11 @@ public class PlayerController : MonoBehaviour {
 			curDir = isFaceRight ? Direction.RIGHT : Direction.LEFT;
 		}
 	}
-	void Flip(){
-		if(isFaceRight && _speed.x < 0 || !isFaceRight && _speed.x > 0){
-			isFaceRight = !isFaceRight;
-			var tmpScale = transform.localScale;
-			tmpScale.x = -1 * tmpScale.x;
-			transform.localScale = tmpScale;
-		}
+	public void Flip(){
+		isFaceRight = !isFaceRight;
+		var tmpScale = transform.localScale;
+		tmpScale.x = -1 * tmpScale.x;
+		transform.localScale = tmpScale;
 	} 
 	void ResetColliderParams(){
 		topColliderPoints[0] = new Vector2(colliderBox.bounds.center.x, colliderBox.bounds.max.y);
