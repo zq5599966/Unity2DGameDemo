@@ -5,24 +5,8 @@ using UnityEngine;
 public class BulletController : MonoBehaviour {
 	public float moveSpeed = 20f;
 	public LayerMask colliderLayers;
-	int faceDir = 1;
-	public void initBulletParam(bool faceRight, Direction dir){
-		faceDir = faceRight ? 1 : -1;
-		switch(dir){
-			case Direction.UP:
-				transform.rotation = Quaternion.Euler(0, 0, 90);
-				break;
-			case Direction.DOWN:
-				transform.rotation = Quaternion.Euler(0, 0, -90);
-				break;
-			case Direction.RIGHT:
-				transform.rotation = Quaternion.identity;
-				break;
-			case Direction.LEFT:
-				transform.rotation = Quaternion.Euler(0, 0, 180);
-				break;
-		}
-	}
+	BulletPool pool;
+
 	void FixedUpdate()
 	{
 		transform.Translate(Vector3.right * moveSpeed * Time.deltaTime);
@@ -32,6 +16,13 @@ public class BulletController : MonoBehaviour {
 		if((colliderLayers & 1 << other.gameObject.layer) == 0){
 			return;
 		}
-		Destroy(gameObject);
+		DestoryBullet();
+	}
+	public void setPool(BulletPool pool){
+		this.pool = pool;
+	}
+
+	void DestoryBullet(){
+		pool.BulletDestory(gameObject);
 	}
 }

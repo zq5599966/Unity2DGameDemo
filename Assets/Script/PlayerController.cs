@@ -29,19 +29,22 @@ public class PlayerController : MonoBehaviour {
 	Vector2[] topColliderPoints, bottomColliderPoints, leftColliderPoints, rightColliderPoints;	//check dir collider points;
 	float colliderOffsetValue = 0.01f;
 	Direction curDir;
+	BulletPool bulletPool;
 	void Awake()
 	{
 		isFaceRight = true;
 		colliderBox = GetComponent<BoxCollider2D>();
+		bulletPool = GetComponent<BulletPool>();
 		topColliderPoints = new Vector2[3];
 		bottomColliderPoints = new Vector2[3];
 		leftColliderPoints = new Vector2[3];
 		rightColliderPoints = new Vector2[3];
 	}
-	void Update () {
-		InputEvent();
-	}
-	void LateUpdate()
+	// void Update () {
+	// 	InputEvent();
+	// }
+	// void LateUpdate()
+	void FixedUpdate()
 	{
 		ResetColliderParams();
 		CheckColliderSide();
@@ -65,13 +68,13 @@ public class PlayerController : MonoBehaviour {
 			ShootOnce();
 		}
 	}
-	void StartJump(){
+	public void StartJump(){
 		_speed.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(Physics2D.gravity.y));
 	}
-	void SetHorizontalMovement(float horValue){
+	public void SetHorizontalMovement(float horValue){
 		_moveStepPos.x = _speed.x = moveSpeed * horValue * Time.deltaTime;
 	}
-	void SetDirection(float horValue, float verValue){
+	public void SetDirection(float horValue, float verValue){
 		if(horValue == 0 && verValue > 0){
 			curDir = Direction.UP;
 		}
@@ -104,6 +107,7 @@ public class PlayerController : MonoBehaviour {
 		rightColliderPoints[1] = new Vector2(colliderBox.bounds.max.x, colliderBox.bounds.min.y + colliderOffsetValue);
 		rightColliderPoints[2] = new Vector2(colliderBox.bounds.max.x, colliderBox.bounds.max.y - colliderOffsetValue);
 	}
+	public GameObject model;
 	void CheckColliderSide(){
 		for(int i = 0; i < leftColliderPoints.Length; i++){
 			Vector2 leftPoint = leftColliderPoints[i];
@@ -121,6 +125,9 @@ public class PlayerController : MonoBehaviour {
 			else if(_speed.x > 0){
 				RaycastHit2D rightRayHit = Physics2D.Raycast(rightPoint, transform.right, Mathf.Abs(_moveStepPos.x), colliderLayers);
 				if(rightRayHit){
+					// float angle = Vector2.Angle(rightRayHit.normal, transform.up);
+					// model.transform.rotation = Quaternion.Euler(Vector3.forward * angle);
+					// Debug.Log("collider side ======" + angle);
 					_speed.x = 0;
 					_moveStepPos.x = rightRayHit.distance;
 					break;
@@ -137,6 +144,9 @@ public class PlayerController : MonoBehaviour {
 				Debug.DrawLine(point, point - (Vector2)transform.up, Color.red);
 				RaycastHit2D rayHit = Physics2D.Raycast(point, -transform.up, Mathf.Abs(_moveStepPos.y), colliderLayers);
 				if(rayHit){
+					// float angle = Vector2.Angle(rayHit.normal, transform.up);
+					// model.transform.rotation = Quaternion.Euler(Vector3.forward * angle);
+					// Debug.Log("collider side ======" + angle);
 					_speed.y = 0;
 					_moveStepPos.y = -rayHit.distance + 0.01f;
 					isInGround = true;
@@ -159,8 +169,9 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 	}
-	void ShootOnce(){
-		BulletController bc = Instantiate(bullet, shootSpawn.position, Quaternion.identity).GetComponent<BulletController>();
-		bc.initBulletParam(isFaceRight, curDir);
+	public void ShootOnce(){
+		// BulletController bc = Instantiate(bullet, shootSpawn.position, Quaternion.identity).GetComponent<BulletController>();
+		// bc.initBulletParam(isFaceRight, curDir);
+		bulletPool.Shoot(shootSpawn.position, curDir);
 	}
 }
