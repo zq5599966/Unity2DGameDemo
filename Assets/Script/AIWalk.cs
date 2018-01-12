@@ -14,20 +14,18 @@ public class AIWalk : MonoBehaviour {
 		initPos = transform.position;
 		moveDir = _controller.isFaceRight ? 1 : -1;
 	}
-	void FixedUpdate()
+	void Update()
 	{
-		Vector3 temp = transform.position;
-		temp.x = temp.x - moveOffset.x;
-		Debug.Log("transform right =========");
-		Debug.DrawLine(transform.position, temp, Color.red);
-		temp.x = transform.position.x + moveOffset.y;
-		Debug.DrawLine(transform.position, temp, Color.red);
 		if(_controller){
-			if(transform.position.x >= initPos.x + moveOffset.y || transform.position.x <= initPos.x - moveOffset.x){
-				_controller.Flip();
-				moveDir = _controller.isFaceRight ? 1 : -1;
-			}
+			CheckIsChangeDirection();
 			_controller.SetHorizontalMovement(moveDir * moveSpeed);
+			Debug.Log("AI position X ======" + transform.position.x);
+		}
+	}
+	void CheckIsChangeDirection(){
+		if(_controller.getIsColliderWall() || transform.position.x > initPos.x + moveOffset.y || transform.position.x < initPos.x - moveOffset.x){
+			_controller.Flip();
+			moveDir = _controller.isFaceRight ? 1 : -1;
 		}
 	}
 }

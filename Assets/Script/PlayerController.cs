@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour {
 	public bool isFaceRight;
 	bool isInGround;
 	bool isjumping;
+	bool isColliderWall;
 	BoxCollider2D colliderBox;
 	Vector2[] topColliderPoints, bottomColliderPoints, leftColliderPoints, rightColliderPoints;	//check dir collider points;
 	float colliderOffsetValue = 0.01f;
@@ -44,7 +45,8 @@ public class PlayerController : MonoBehaviour {
 	// 	InputEvent();
 	// }
 	// void LateUpdate()
-	void FixedUpdate()
+	// void FixedUpdate()
+	void Update()
 	{
 		ResetColliderParams();
 		CheckColliderSide();
@@ -107,6 +109,8 @@ public class PlayerController : MonoBehaviour {
 		rightColliderPoints[0] = new Vector2(colliderBox.bounds.max.x, colliderBox.bounds.center.y);
 		rightColliderPoints[1] = new Vector2(colliderBox.bounds.max.x, colliderBox.bounds.min.y + colliderOffsetValue);
 		rightColliderPoints[2] = new Vector2(colliderBox.bounds.max.x, colliderBox.bounds.max.y - colliderOffsetValue);
+
+		isColliderWall = false;
 	}
 	public GameObject model;
 	void CheckColliderSide(){
@@ -120,6 +124,7 @@ public class PlayerController : MonoBehaviour {
 				if(leftRayHit){
 					_speed.x = 0;
 					_moveStepPos.x = -leftRayHit.distance;
+					isColliderWall = true;
 					break;
 				}
 			}
@@ -131,6 +136,7 @@ public class PlayerController : MonoBehaviour {
 					// Debug.Log("collider side ======" + angle);
 					_speed.x = 0;
 					_moveStepPos.x = rightRayHit.distance;
+					isColliderWall = true;
 					break;
 				}
 			}
@@ -174,5 +180,9 @@ public class PlayerController : MonoBehaviour {
 		// BulletController bc = Instantiate(bullet, shootSpawn.position, Quaternion.identity).GetComponent<BulletController>();
 		// bc.initBulletParam(isFaceRight, curDir);
 		bulletPool.Shoot(shootSpawn.position, curDir);
+	}
+
+	public bool getIsColliderWall(){
+		return isColliderWall;
 	}
 }
