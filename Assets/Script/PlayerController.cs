@@ -92,9 +92,9 @@ public class PlayerController : MonoBehaviour {
 	}
 	public void Flip(){
 		isFaceRight = !isFaceRight;
-		var tmpScale = transform.localScale;
+		var tmpScale = model.transform.localScale;
 		tmpScale.x = -1 * tmpScale.x;
-		transform.localScale = tmpScale;
+		model.transform.localScale = tmpScale;
 	} 
 	void ResetColliderParams(){
 		topColliderPoints[0] = new Vector2(colliderBox.bounds.center.x, colliderBox.bounds.max.y);

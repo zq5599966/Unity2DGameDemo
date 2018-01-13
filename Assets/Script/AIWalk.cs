@@ -19,13 +19,18 @@ public class AIWalk : MonoBehaviour {
 		if(_controller){
 			CheckIsChangeDirection();
 			_controller.SetHorizontalMovement(moveDir * moveSpeed);
-			Debug.Log("AI position X ======" + transform.position.x);
 		}
 	}
 	void CheckIsChangeDirection(){
-		if(_controller.getIsColliderWall() || transform.position.x > initPos.x + moveOffset.y || transform.position.x < initPos.x - moveOffset.x){
+		if(_controller.getIsColliderWall() || isMoveBoundary()){
 			_controller.Flip();
 			moveDir = _controller.isFaceRight ? 1 : -1;
 		}
+	}
+	bool isMoveBoundary(){
+		if(moveOffset.x == 0 && moveOffset.y == 0){
+			return false;
+		}
+		return transform.position.x > initPos.x + moveOffset.y || transform.position.x < initPos.x - moveOffset.x;
 	}
 }

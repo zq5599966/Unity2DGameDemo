@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BulletController : MonoBehaviour {
 	public float moveSpeed = 20f;
+	public int damage;
 	public LayerMask colliderLayers;
 	BulletPool pool;
 
@@ -16,13 +17,17 @@ public class BulletController : MonoBehaviour {
 		if((colliderLayers & 1 << other.gameObject.layer) == 0){
 			return;
 		}
-		DestoryBullet();
+		DestoryBullet(other.gameObject);
 	}
 	public void setPool(BulletPool pool){
 		this.pool = pool;
 	}
 
-	void DestoryBullet(){
+	void DestoryBullet(GameObject obj){
+		Health health = obj.GetComponent<Health>();
+		if(health){
+			health.TakeDamage(damage);
+		}
 		pool.BulletDestory(gameObject);
 	}
 }
