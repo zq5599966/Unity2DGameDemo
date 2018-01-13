@@ -10,8 +10,10 @@ public class CameraController : MonoBehaviour {
 
 	void LateUpdate()
 	{
-		Vector3 newPos = Vector3.SmoothDamp(transform.position, target.position, ref _currentVelocity, smoothTime);
-		newPos.z = transform.position.z;
-		transform.position = newPos;
+		if(target){
+			Vector3 newPos = Vector3.SmoothDamp(transform.position, target.position, ref _currentVelocity, smoothTime);
+			newPos.z = transform.position.z;
+			transform.position = newPos;
+		}
 	}
 }

@@ -19,7 +19,8 @@ public class PlayerController : MonoBehaviour {
 	public float jumpHeight = 3.0f;
 	public LayerMask colliderLayers;
 	public Transform shootSpawn;
-	public GameObject bullet;
+	public float shootRate;
+	float shootTimer;
 	Vector2 _speed;
 	Vector2 _moveStepPos;
 	public bool isFaceRight;
@@ -41,11 +42,7 @@ public class PlayerController : MonoBehaviour {
 		leftColliderPoints = new Vector2[3];
 		rightColliderPoints = new Vector2[3];
 	}
-	// void Update () {
-	// 	InputEvent();
-	// }
-	// void LateUpdate()
-	// void FixedUpdate()
+
 	void Update()
 	{
 		ResetColliderParams();
@@ -59,20 +56,20 @@ public class PlayerController : MonoBehaviour {
 		}
 		
 	}
-	void InputEvent(){
-		float horValue = Input.GetAxis("Horizontal");
-		SetHorizontalMovement(horValue);
-		float verValue = Input.GetAxis("Vertical");
-		SetDirection(horValue, verValue);
+	// void InputEvent(){
+	// 	float horValue = Input.GetAxis("Horizontal");
+	// 	SetHorizontalMovement(horValue);
+	// 	float verValue = Input.GetAxis("Vertical");
+	// 	SetDirection(horValue, verValue);
 
-		if(Input.GetButtonDown("Jump")){
-			StartJump();
-		}
+	// 	if(Input.GetButtonDown("Jump")){
+	// 		StartJump();
+	// 	}
 
-		if(Input.GetButtonDown("Fire1")){
-			ShootOnce();
-		}
-	}
+	// 	if(Input.GetButtonDown("Fire1")){
+	// 		ShootOnce();
+	// 	}
+	// }
 	public void StartJump(){
 		_speed.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(Physics2D.gravity.y));
 	}
@@ -177,9 +174,14 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 	public void ShootOnce(){
-		// BulletController bc = Instantiate(bullet, shootSpawn.position, Quaternion.identity).GetComponent<BulletController>();
-		// bc.initBulletParam(isFaceRight, curDir);
 		bulletPool.Shoot(shootSpawn.position, curDir);
+		shootTimer = 0;
+	}
+	public void ShootStart(){
+		shootTimer += Time.deltaTime;
+		if(shootTimer >= shootRate){
+			ShootOnce();
+		}
 	}
 
 	public bool getIsColliderWall(){

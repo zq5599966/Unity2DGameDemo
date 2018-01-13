@@ -21,5 +21,8 @@ public class InputController : MonoBehaviour {
 		if(Input.GetButtonDown("Fire1")){
 			player.ShootOnce();
 		}
+		if(Input.GetButton("Fire1")){
+			player.ShootStart();
+		}
 	}
 }
